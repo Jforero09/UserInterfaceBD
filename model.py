@@ -1,6 +1,7 @@
 from pydantic import BaseModel,EmailStr
 from datetime import date
 from typing import Optional
+from datetime import datetime
 
 class Ubicacion(BaseModel):
     codubica: str          # VARCHAR2(4), NOT NULL
@@ -31,3 +32,16 @@ class Usuario(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+class UsuarioSinConsecuser(BaseModel):
+    codubica: str
+    nombre: str
+    apellido: str
+    username: str
+    email: str
+    celular: str
+
+    class Config:
+         from_attributes = True
