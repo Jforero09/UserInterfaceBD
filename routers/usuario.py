@@ -42,13 +42,15 @@ def insertar_usuario_sinconsec(usuario: UsuarioSinConsecuser):
         cursor.execute("SELECT 1 FROM usuario WHERE email = :1", (usuario.email,))
         if cursor.fetchone():
             raise HTTPException(status_code=409, detail="El usuario ya está registrado")
+        
+        username=usuario.nombre
 
         cursor.execute("""
             INSERT INTO usuario (CODUBICA, NOMBRE, APELLIDO, USERNAME, FECHAREGISTRO, EMAIL, CELULAR)
             VALUES (:1, :2, :3, :4, :5, :6, :7)
         """, (
             usuario.codubica, usuario.nombre, usuario.apellido,
-            usuario.username,datetime.now(), usuario.email, usuario.celular
+            username,datetime.now(), usuario.email, usuario.celular
         ))
 
         conn.commit()

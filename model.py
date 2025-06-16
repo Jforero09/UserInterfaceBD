@@ -39,7 +39,6 @@ class UsuarioSinConsecuser(BaseModel):
     codubica: str
     nombre: str
     apellido: str
-    username: str
     email: str
     celular: str
 
