@@ -1,21 +1,38 @@
 from fastapi import APIRouter, HTTPException
-from database import get_connection
-from model import Usuario,UsuarioSinConsecuser
+from .database import get_connection
+from .UserVerification import generate_and_send_passcode, verify_passcode
+from model import Usuario
 from datetime import datetime
 
-router = APIRouter(prefix="/usuario",tags=["Usuario"])
+router = APIRouter(prefix="/usuario", tags=["Usuario"])
 
+# Ruta para enviar el passcode al correo del usuario
+@router.post("/enviar-passcode")
+def enviar_passcode(usuario: Usuario):
+    try:
+        # Generar y enviar passcode
+        passcode = generate_and_send_passcode(usuario.email)
+        return {"mensaje": "Passcode enviado a tu correo."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Ruta para verificar el passcode ingresado por el usuario
+@router.post("/verificar-passcode")
+def verificar_passcode(usuario: Usuario, passcode_ingresado: str):
+    try:
+        if verify_passcode(passcode_ingresado, usuario.email):
+            return {"mensaje": "Passcode válido. Ahora puedes registrarte."}
+        else:
+            raise HTTPException(status_code=400, detail="Passcode incorrecto.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Ruta para insertar el usuario después de la verificación del passcode
 @router.post("/")
 def insertar_usuario(usuario: Usuario):
     try:
         conn = get_connection()
         cursor = conn.cursor()
-
-        #Valida si el usuario ya esta registrado
-        cursor.execute("SELECT 1 FROM usuario WHERE CONCECUSER = :1", (usuario.concecuser,))
-        if cursor.fetchone():
-         raise HTTPException(status_code=409, detail="El usuario ya está registrado")
-
 
         cursor.execute("""
             INSERT INTO usuario (CONCECUSER, CODUBICA, NOMBRE, APELLIDO, USER, FECHAREGISTRO, EMAIL, CELULAR)
@@ -31,6 +48,8 @@ def insertar_usuario(usuario: Usuario):
     finally:
         cursor.close()
         conn.close()
+
+
 
 @router.post("/sin_id")
 def insertar_usuario_sinconsec(usuario: UsuarioSinConsecuser):
@@ -87,3 +106,4 @@ def mostrar_usuarios():
     finally:
         cursor.close()
         conn.close()
+
