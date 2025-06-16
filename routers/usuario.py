@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from database import get_connection
 from UserVerification import generate_and_send_passcode, verify_passcode
-from model import Usuario
+from model import Usuario, UsuarioSinConsecuser
 from datetime import datetime
 
 router = APIRouter(prefix="/usuario", tags=["Usuario"])

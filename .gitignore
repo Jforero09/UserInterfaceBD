@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+EMAIL=bssdatos@gmail.com
+EMAIL_PASSWORD=password123/
+
 # Distribution / packaging
 .Python
 build/
